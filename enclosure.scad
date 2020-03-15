@@ -2,8 +2,8 @@ use <raspberrypi.scad>
 use <x860.scad>
 
 print=false;
-open=true;
-device=false;
+open=false;
+device=true;
 part="";
 
 if(print) {
@@ -40,18 +40,19 @@ enclosure_thickness_z = 3;
 ventilate = true;
 vent_hole_d = 2;
 
-spacer_d = 5;
+hole_tolerance = 0.2;
+spacer_d = 5 + hole_tolerance;
 spacer_bottom_z = 8;
 spacer_middle_z = 12;
 spacer_top_z = 12;
 
-screw_diameter = 2.46 + 0.2;
+screw_diameter = 2.46 + hole_tolerance;
 screw_head_height = 1.7;
-screw_head_diameter = 4.8;
+screw_head_diameter = 4.8 + hole_tolerance;
 
 hole_depth = max(3, enclosure_thickness_z);
 
-tolerance_z = 0.1;
+tolerance_z = 0;
 tolerance_device_y = 4;
 tolerance_device_x = 4;
 tolerance_top = 0.3;
@@ -106,7 +107,7 @@ module bottom()
       _box(inner_z);
     }
 
-    translate([tolerance_device_x, 0, hole_depth])
+    translate([tolerance_device_x, 0, hole_depth + tolerance_z])
     _holes();
   }
 
@@ -144,7 +145,7 @@ module _plate(top=false)
       translate([enclosure_thickness_xy + tolerance_device_x, enclosure_thickness_xy, 0])
       for(hole = board_holes) {
         translate(hole)
-        cylinder(h=hole_depth, d=6);
+        cylinder(h=hole_depth, d=spacer_d);
       };
 
       if(top){
@@ -158,7 +159,7 @@ module _plate(top=false)
       for(hole = board_holes) {
         translate(hole)
         translate([0, 0, hole_depth])
-        cylinder(h=hole_depth, d=5);
+        cylinder(h=hole_depth, d=spacer_d);
 
         translate(hole)
         cylinder(h=hole_depth, d=screw_diameter);
@@ -212,14 +213,14 @@ module _holes()
       cube([eth_hole_depth + 5, eth_hole_width, eth_hole_height]);
 
       // USB
-      translate([device_x - usb_hole_depth + 5, 31.5 - usb_hole_width/2, 8 - usb_hole_height/2])
+      translate([device_x - usb_hole_depth + 5, 31.9 - usb_hole_width/2, 8 - usb_hole_height/2])
       cube([usb_hole_depth + 5, usb_hole_width, usb_hole_height]);
-      translate([device_x, 31.5 - usb_hole_width/2 - 1, 8 - usb_hole_height/2])
+      translate([device_x, 31.9 - usb_hole_width/2 - 1, 8 - usb_hole_height/2])
       cube([1, usb_hole_width + 2, usb_hole_height + 1]);
 
-      translate([device_x - usb_hole_depth + 5, 49 - usb_hole_width/2, 8 - usb_hole_height/2])
+      translate([device_x - usb_hole_depth + 5, 48.9 - usb_hole_width/2, 8 - usb_hole_height/2])
       cube([usb_hole_depth + 5, usb_hole_width, usb_hole_height]);
-      translate([device_x, 49 - usb_hole_width/2 - 1, 8 - usb_hole_height/2])
+      translate([device_x, 48.9 - usb_hole_width/2 - 1, 8 - usb_hole_height/2])
       cube([1, usb_hole_width + 2, usb_hole_height + 1]);
       
       // micro USB
@@ -234,7 +235,6 @@ module _holes()
       translate([55.5, 0, -0.5 + audio_hole_d/2])
       rotate([-90,0,0]) cylinder(d=audio_hole_d, h=5);
 
-
       // Micro SD Card
       translate([-10, 31 - sd_hole_width/2, -2 - sd_hole_height/2])
       cube([20, sd_hole_width, sd_hole_height]);
@@ -243,7 +243,7 @@ module _holes()
     // hdd
     translate([0, 0, spacer_bottom_z + board_z]) {
       // USB
-      translate([device_x - enclosure_thickness_xy, 49 - usb_hole_width/2, 4 - usb_hdd_hole_height/2])
+      translate([device_x - enclosure_thickness_xy, 48.9 - usb_hole_width/2, 4 - usb_hdd_hole_height/2])
       cube([10, usb_hole_width, usb_hdd_hole_height]);
 
       // micro USB

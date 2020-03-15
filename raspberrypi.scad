@@ -43,9 +43,9 @@ module pi3()
     cube([21, 16, 13.7]);
 
     // usb1
-    translate([69, 23, 0])
+    translate([69, 23.4, 0])
     cube([18, 13.1, 15.6]);
-    translate([86, 22, 0])
+    translate([86, 22.4, 0])
     cube([1, 15.1, 16.6]);
     
     // usb2
