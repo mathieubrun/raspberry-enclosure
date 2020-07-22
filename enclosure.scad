@@ -2,9 +2,9 @@ use <raspberrypi.scad>
 use <x860.scad>
 
 print=false;
-open=false;
+open=true;
 device=true;
-part="";
+part="top";
 
 if(print) {
   if(part=="bottom")
@@ -81,9 +81,9 @@ board_holes=[
   [ 61.5, 3.5  ]
 ];
 
-vent_holes=5;
-vent_hole_padding_x=(52.5 - 3.5) / 6;
-vent_hole_padding_y=(61.5 - 3.5) / 6;
+vent_holes=7;
+vent_hole_padding_x=(52.5 - 3.5) / 10;
+vent_hole_padding_y=(61.5 - 3.5) / 15;
 
 vent_hole_distance_y=(52.5 - 3.5 - 2 * vent_hole_padding_y) / (vent_holes);
 vent_hole_distance_x=(61.5 - 3.5 - 2 * vent_hole_padding_x) / (vent_holes);
@@ -158,13 +158,13 @@ module _plate(top=false)
     {
       for(hole = board_holes) {
         translate(hole)
-        translate([0, 0, hole_depth])
+        translate([0, 0, hole_depth+0.5])
         cylinder(h=hole_depth, d=spacer_d);
 
         translate(hole)
-        cylinder(h=hole_depth, d=screw_diameter);
+        cylinder(h=hole_depth+0.5, d=screw_diameter);
 
-        translate(hole)
+        translate(hole)   
         cylinder(h=screw_head_height, d1=screw_head_diameter, d2=screw_diameter);
       };
 
@@ -204,6 +204,10 @@ hdmi_hole_height = 8;
 
 audio_hole_d = 7;
 
+zigbee_width=18 + 5;
+zigbee_length=30 + 5;
+zigbee_height=5;
+
 module _holes()
   union() {
     // pi
@@ -213,9 +217,9 @@ module _holes()
       cube([eth_hole_depth + 5, eth_hole_width, eth_hole_height]);
 
       // USB
-      translate([device_x - usb_hole_depth + 5, 31.9 - usb_hole_width/2, 8 - usb_hole_height/2])
+      translate([device_x - usb_hole_depth + 5, 31.1 - usb_hole_width/2, 8 - usb_hole_height/2])
       cube([usb_hole_depth + 5, usb_hole_width, usb_hole_height]);
-      translate([device_x, 31.9 - usb_hole_width/2 - 1, 8 - usb_hole_height/2])
+      translate([device_x, 31.1 - usb_hole_width/2 - 1, 8 - usb_hole_height/2])
       cube([1, usb_hole_width + 2, usb_hole_height + 1]);
 
       translate([device_x - usb_hole_depth + 5, 48.9 - usb_hole_width/2, 8 - usb_hole_height/2])
@@ -249,6 +253,11 @@ module _holes()
       // micro USB
       translate([device_x - enclosure_thickness_xy, 12 - micro_usb_hole_width/2, 2 - micro_usb_hole_height/2])
       cube([10, micro_usb_hole_width, micro_usb_hole_height]);
+    }
+    
+    // zigbee
+    translate([8, 60 - zigbee_length, spacer_bottom_z + board_z + spacer_middle_z + board_z + 9]) {
+      cube([zigbee_width, zigbee_length, zigbee_height]);
     }
   }
 
